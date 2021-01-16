@@ -1,0 +1,17 @@
+His Logreg model:
+Accuracy: 0.6402116402116402
+Precision: 0.6347197106690777
+Recall: 0.833729216152019
+----------------------------------
+Confusion Matrix:
+[[133 202]
+ [ 70 351]]
+
+Random Forest Model
+Accuracy: 0.6812169312169312
+Precision: 0.687007874015748
+Recall: 0.8097447795823666
+----------------------------------
+Confusion Matrix:
+[[166 159]
+ [ 82 349]]
