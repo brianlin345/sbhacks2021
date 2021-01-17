@@ -22,7 +22,7 @@ def get_predictions():
     index = request.args.get('gameId')
     conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
-    c.execute('SELECT rowid, * FROM game_predictions WHERE rowid=?', index)
+    c.execute('SELECT rowid, * FROM game_predictions WHERE rowid=?', (index, ))
     prediction_raw = c.fetchone()
     conn.close()
     prediction = {"index": prediction_raw[0], "prediction": prediction_raw[1]}

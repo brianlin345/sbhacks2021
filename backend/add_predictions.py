@@ -1,4 +1,5 @@
 import sqlite3
+import os
 
 DATABASE = 'nbatweets.db'
 
@@ -6,8 +7,7 @@ def insert_prediction(prediction_string):
     """
     This function inserts a summary into the database.
     Args:
-        game_index (int): index for the given game summary in database
-        prediction (string): summary of a game including final score, individual performance, and team performance.
+        prediction_string (string): prediction of game result with percent chance.
     """
     prediction_query = (prediction_string,)
     conn = sqlite3.connect(DATABASE)

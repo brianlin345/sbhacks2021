@@ -53,7 +53,7 @@ def predictDailyGames(currentDate, season, startOfSeason):
 
     with open('rfModel.pkl', 'rb') as file:  # Change filename here if model is named differently
         pickleModel = pickle.load(file)
-
+    print("model opened")
     predictions = pickleModel.predict_proba(justZScoreDifs)  # Predicts the probability that the home team loses/wins
 
     gamesWithPredictions = [dailyGames, predictions]
@@ -96,4 +96,3 @@ def makeInterpretPredictions(currentDate, season, startOfSeason):
 # EDIT THIS
 # First arg is date to predict (mm/dd/yyyy), second is season (yyyy-yy), and third is start date of season (mm/dd/yyyy)
 #makeInterpretPredictions('01/04/2020', '2019-20', '10/22/2019')
-

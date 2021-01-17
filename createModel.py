@@ -140,7 +140,7 @@ def performRF(dataframe):
     Y = dataframe.Result  # Target Variable
 
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.25, shuffle=True)
-    rf = ske.RandomForestClassifier(n_estimators=128, max_depth=8, random_state=0)
+    rf = ske.RandomForestClassifier(n_estimators=64, max_depth=8, random_state=0)
 
     rf.fit(X_train, Y_train)  # Fits model with data
 

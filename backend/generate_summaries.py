@@ -9,9 +9,6 @@ DATABASE = 'nbatweets.db'
 
 summary_table = 'game_summaries'
 
-TEAM_AVGS = [101.5455556, 17.62888889, 12.73555556, 22.56777778, 77.40666667, 49.98, 52.46, 56.00222222, 107.3333333, 107.3966667]
-
-
 def game_score(team_stat_df):
     """
     This function returns the overall scoreline of a game.
@@ -152,11 +149,11 @@ def team_highlight(team_stat_df):
     max_away_diff = max(awayTeamValues)
 
     if max_home_diff >= max_away_diff:
-        team_highlight_string = team_stat_df.iloc[0]['Team'] + " had the most notable " + statsDict[homeTeamValues.index(max_home_diff)] + " performance with value " + str(max_home_diff)
+        team_highlight_string = "The " + team_stat_df.iloc[0]['Team'] + " had the most notable " + statsDict[homeTeamValues.index(max_home_diff)] + " performance with value " + str(max_home_diff)
     else:
-        team_highlight_string = team_stat_df.iloc[1]['Team'] + " had the most notable " + statsDict[awayTeamValues.index(max_away_diff)] + " performance with value " + str(max_away_diff)
+        team_highlight_string = "The " + team_stat_df.iloc[1]['Team'] + " had the most notable " + statsDict[awayTeamValues.index(max_away_diff)] + " performance with value " + str(max_away_diff)
     team_highlight_string += "."
-    
+
     return team_highlight_string
 
 def generate_summary(game_id):

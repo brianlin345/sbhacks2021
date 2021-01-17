@@ -12,7 +12,7 @@ def getStatsForTeam(team, startDate, endDate, season='2019-20'):
 
     time.sleep(1)
     # Uses NBA_API to access the dictionary holding basic stats for every team per 100 possessions
-    generalTeamInfo = teamdashboardbygeneralsplits.TeamDashboardByGeneralSplits(team_id=teams[team], per_mode_detailed='Per100Possessions', date_from_nullable=startDate, date_to_nullable=endDate, season=season, headers=customHeaders, timeout=120)
+    generalTeamInfo = teamdashboardbygeneralsplits.TeamDashboardByGeneralSplits(team_id=teams[team], per_mode_detailed='Per100Possessions', date_from_nullable=startDate, date_to_nullable=endDate, season=season, headers=customHeaders, timeout=300)
     generalTeamDict = generalTeamInfo.get_normalized_dict()
     generalTeamDashboard = generalTeamDict['OverallTeamDashboard'][0]
 
@@ -21,9 +21,9 @@ def getStatsForTeam(team, startDate, endDate, season='2019-20'):
     rebounds = generalTeamDashboard['REB']
     turnovers = generalTeamDashboard['TOV']
     plusMinus = generalTeamDashboard['PLUS_MINUS']
-
+    time.sleep(1)
     # Uses NBA_API to access the dictionary holding advanced stats for every team
-    advancedTeamInfo = teamdashboardbygeneralsplits.TeamDashboardByGeneralSplits(team_id=teams[team], measure_type_detailed_defense='Advanced', date_from_nullable=startDate, date_to_nullable=endDate, season=season, headers=customHeaders, timeout=120)
+    advancedTeamInfo = teamdashboardbygeneralsplits.TeamDashboardByGeneralSplits(team_id=teams[team], measure_type_detailed_defense='Advanced', date_from_nullable=startDate, date_to_nullable=endDate, season=season, headers=customHeaders, timeout=300)
     advancedTeamDict  = advancedTeamInfo.get_normalized_dict()
     advancedTeamDashboard = advancedTeamDict['OverallTeamDashboard'][0]
 
