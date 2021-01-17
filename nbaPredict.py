@@ -66,16 +66,20 @@ def interpretPredictions(gamesWithPredictions):
 
     dailyGames = gamesWithPredictions[0]  # Dict holding daily matchups
     probabilityPredictions = gamesWithPredictions[1]  # List of lists holding probs of loss/win for home team
-
+    predictionsList = []
     for gameNum in range(len(probabilityPredictions)):  # Loops through each game
         winProb = probabilityPredictions[gameNum][1]
         winProbRounded = round(winProb,4)
-        winProbPercent = "{:.2%}".format(winProbRounded)  # Formulates percent chance that home team wins
+        winProbDif = 1 - winProbRounded
+        winProbPercent = "{:.1%}".format(winProbRounded)  # Formulates percent chance that home team wins
+        difProbPercent = "{:.1%}".format(winProbDif)
 
         homeTeam = list(dailyGames.keys())[gameNum]
         awayTeam = list(dailyGames.values())[gameNum]
 
-        print('There is a ' + winProbPercent + ' chance that the ' + homeTeam + ' will defeat the ' + awayTeam + '.')
+        predictionsList.append(homeTeam +"(" + winProbPercent + ") vs " + awayTeam + "(" + difProbPercent + ")\n")
+
+    return predictionsList
 
 
 # Fetches games on set date and returns predictions for each game
@@ -84,13 +88,12 @@ def interpretPredictions(gamesWithPredictions):
 def makeInterpretPredictions(currentDate, season, startOfSeason):
 
     setCurrentWorkingDirectory('SavedModels')
-
-    print('Predictions for ' + currentDate + ':')
     predictions = predictDailyGames(currentDate, season, startOfSeason)
-    interpretPredictions(predictions)
+    return(interpretPredictions(predictions))
+
 
 
 # EDIT THIS
 # First arg is date to predict (mm/dd/yyyy), second is season (yyyy-yy), and third is start date of season (mm/dd/yyyy)
 #makeInterpretPredictions('01/04/2020', '2019-20', '10/22/2019')
-makeInterpretPredictions('01/16/2021', '2020-21', '12/22/2020')
+
