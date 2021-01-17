@@ -1,5 +1,7 @@
 # BallerB0t
 BallerB0t is a bot, coded in Python, that tweets predictions on today's NBA games as well as summaries on the results of yesterday's games. BallerB0t uses a Random Forest Classifier to make its predictions. It uses Flask and a SQL database. <br />
+Twitter Link: https://twitter.com/BallerB0t
+<br />
 ## Main Dependencies
 - nba-api
 - tweepy
@@ -21,3 +23,10 @@ BallerB0t is a bot, coded in Python, that tweets predictions on today's NBA game
 - Trained using statistics, per 100 posessions, across three seasons: 2016-2017, 2017-2018, and 2018-2019.
 - Features: Home team, win percentage, rebounds, turnovers, plus-minus, offensive rating, defensive rating, true shooting percentage.
 - Accuracy of 65%.
+
+## Backend API/Database
+- Box score tables are scraped from the NBA section of ESPN using requests and BeautifulSoup.
+- Pandas is used to extract key statistics like triple-doubles and create formatted highlights in text format.
+- Sqlite database stores finalized game summaries and predictions, indexed by game id provided by ESPN and generation id.
+- Flask server returns information from the database with endpoints for game summaries and predictions.
+- Twitter bot makes a GET request to the API with the specific game ids needed to receive the final text it will tweet.
