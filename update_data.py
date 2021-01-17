@@ -1,9 +1,10 @@
 import requests
 import os
+from datetime import date
 
 from nbaPredict import makeInterpretPredictions
 from backend.generate_summaries import create_summary
-from backend.add_predictions import insert_prediction
+from backend.add_predictions import insert_prediction, get_prediction_index
 
 
 nba_scoreboard = 'http://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=20210115'
@@ -11,19 +12,27 @@ score_elem_exclude = "STATUS_POSTPONED"
 
 def update_all():
     """
-    This is the main function that adds rows into the backend database for predictions and summaries
+    This is the main function that adds rows into the backend database for predictions and summaries.
     """
     game_id_list = scrape_game_nums()
-    print(game_id_list)
     os.chdir(os.path.join(os.getcwd(), "backend"))
-    #update_predictions()
+    prediction_id_list = update_predictions()
+    print(prediction_id_list)
     update_summaries(game_id_list)
     os.chdir('../')
 
 def update_predictions():
     today = date.today()
     d1 = today.strftime("%m/%d/%Y")
-    prediction_list = makeInterpretPredictions(d1, '2020-21', '12/22/2020')
+    #prediction_list = makeInterpretPredictions(d1, '2020-21', '12/22/2020')
+    prediction_list = ['aqecr', 'bcqrv', 'cqcqr', 'dcqrv']
+    curr_row = get_prediction_index()
+    row_indices = []
+    for prediction in prediction_list:
+        insert_prediction(prediction)
+        row_indices.append(curr_row)
+        curr_row += 1
+    return row_indices
 
 def update_summaries(game_id_list):
     """

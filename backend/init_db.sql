@@ -9,6 +9,5 @@ CREATE TABLE IF NOT EXISTS game_summaries (
 
 DROP TABLE IF EXISTS game_predictions;
 CREATE TABLE IF NOT EXISTS game_predictions (
-  game_num TEXT,
   game_prediction TEXT
 );

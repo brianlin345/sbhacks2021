@@ -2,19 +2,28 @@ import sqlite3
 
 DATABASE = 'nbatweets.db'
 
-def insert_prediction(game_id, prediction_string):
+def insert_prediction(prediction_string):
     """
     This function inserts a summary into the database.
     Args:
         game_index (int): index for the given game summary in database
         prediction (string): summary of a game including final score, individual performance, and team performance.
     """
-    summary_query = (game_id, prediction_string)
+    prediction_query = (prediction_string,)
+    print(prediction_query)
     conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
-    c.execute('INSERT INTO game_predictions VALUES (?, ?)', summary_query)
+    c.execute('INSERT INTO game_predictions VALUES (?)', prediction_query)
     conn.commit()
     conn.close()
 
-def get_index():
-    
+def get_prediction_index():
+    conn = sqlite3.connect(DATABASE)
+    c = conn.cursor()
+    c.execute('SELECT MAX(rowid) FROM game_predictions')
+    max_row = c.fetchone()[0]
+    conn.close()
+    if max_row is None:
+        return 1
+    else:
+        return max_row + 1
