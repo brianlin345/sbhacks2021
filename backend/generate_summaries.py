@@ -118,10 +118,41 @@ def is_double_digit(box_score_row):
         return rebounds + assists, 1
     return 0, 0
 
-
 def team_highlight(team_stat_df):
-    return ""
+    """
+    This function generates a highlight denoting either team's best statistic compared to seasonal averages.
+    Chosen statistics include: assist ratio (AST), offensive rebound ratio (OREB), defensive rebound ratio (DREB), and field goal percentage (FG).
+    Args:
+        team_stat_df (Dataframe): dataframe containing cleaned team statistics table.
+    Returns:
+        team_highlight_string (string): preset sentence describing most notable team performance.
+    """
+    avgStats = [17.6, 22.6, 77.4, 52.5]
+    statsDict = {0: 'AST', 1: 'OREB', 2: 'DREB', 3: 'FG%'}
 
+    team_highlight_string = ""
+
+    homeTeamValues = team_stat_df.iloc[0][['AST', 'OREB', 'DREB', 'FG']].tolist()
+    homeTeamValues[3] = homeTeamValues[3].split("-")
+    homeTeamValues[3] = (float(homeTeamValues[3][0]) / float(homeTeamValues[3][1])) * 100
+
+    awayTeamValues = team_stat_df.iloc[1][['AST', 'OREB', 'DREB', 'FG']].tolist()
+    awayTeamValues[3] = awayTeamValues[3].split("-")
+    awayTeamValues[3] = (float(awayTeamValues[3][0]) / float(awayTeamValues[3][1])) * 100
+
+    for i in range(4):
+        homeTeamValues[i] = round(float(homeTeamValues[i]) - avgStats[i], 1)
+        awayTeamValues[i] = round(float(awayTeamValues[i]) - avgStats[i], 1)
+
+    max_home_diff = max(homeTeamValues)
+    max_away_diff = max(awayTeamValues)
+
+    if max_home_diff >= max_away_diff:
+        team_highlight_string = team_stat_df.iloc[0]['Team'] + " had the most notable " + statsDict[homeTeamValues.index(max_home_diff)] + " performance with value " + str(max_home_diff)
+    else:
+        team_highlight_string = team_stat_df.iloc[1]['Team'] + " had the most notable " + statsDict[awayTeamValues.index(max_away_diff)] + " performance with value " + str(max_away_diff)
+
+    return team_highlight_string
 
 def generate_summary(game_id):
     """
