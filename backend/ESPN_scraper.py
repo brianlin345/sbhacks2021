@@ -8,7 +8,7 @@ nba_root = "https://www.espn.com/nba/boxscore"
 
 def scrape_game(game_id):
     nba_root = "https://www.espn.com/nba/boxscore"
-    box_score_params = {"gameId": str(game_id)}
+    box_score_params = {"gameId": game_id}
 
     page = requests.get(nba_root, params = box_score_params)
     soup = BeautifulSoup(page.content, 'html.parser')
@@ -83,5 +83,5 @@ def scrape_game(game_id):
     team_stat_df = pd.DataFrame.from_dict(team_stat_dict, orient = 'index', columns = box_score_cols)
     box_score_df["Team"] = team_col
     team_stat_df["Team"] = teams
-    
+
     return box_score_df, team_stat_df

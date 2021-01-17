@@ -55,17 +55,17 @@ def individual_highlight(box_score_df):
     for player_attribute in highlight_player:
         if key_index == 0:
             individual_highlight_string += highlight_player[player_attribute]
+            if double_digit_type > 0:
+                if double_digit_type == 1:
+                    individual_highlight_string += ", who recorded a double-double"
+                elif double_digit_type == 2:
+                    individual_highlight_string += ", who recorded a triple-double"
             individual_highlight_string += " with "
         else:
             individual_highlight_string += highlight_player[player_attribute] + " " + player_attribute
             if key_index < num_attributes - 1:
                 individual_highlight_string += ", "
         key_index += 1
-    if double_digit_type > 0:
-        if double_digit_type == 1:
-            individual_highlight_string += "–this was a double-double"
-        elif double_digit_type == 2:
-            individual_highlight_string += "–this was a triple-double"
 
     individual_highlight_string += "."
 
@@ -136,9 +136,9 @@ def generate_summary(game_id):
     individual_highlight_string = individual_highlight(box_score_df)
     team_highlight_string = team_highlight(team_stat_df)
     summary = game_score_string + individual_highlight_string + team_highlight_string
-    return summary
+    return str(game_id), summary
 
-def insert_summary(game_index, summary_string):
+def insert_summary(game_id, summary_string):
     """
     This function inserts a summary into the database.
     Args:
@@ -146,14 +146,13 @@ def insert_summary(game_index, summary_string):
         game_index (int): index for the given game summary in database
         summary_string (string): summary of a game including final score, individual performance, and team performance.
     """
-    summary_query = (game_index, summary_string)
+    summary_query = (game_id, summary_string)
     conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
     c.execute('INSERT INTO game_summaries VALUES (?, ?)', summary_query)
     conn.commit()
     conn.close()
 
-
-summ = generate_summary(401267336)
-print(summ)
-insert_summary(1, summ)
+def create_summary(game_id):
+    id, summ = generate_summary(401267336)
+    insert_summary(id, summ)
