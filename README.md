@@ -20,7 +20,7 @@ Twitter Link: https://twitter.com/BallerB0t
 
 ## Random Forest Model
 - Predictions are generated using a Random Forest Classifier with 75 estimators and a max-depth of 8. 
-- Trained using statistics, per 100 posessions, across three seasons: 2016-2017, 2017-2018, and 2018-2019.
+- Trained using statistics, per 100 possessions, across three seasons: 2016-2017, 2017-2018, and 2018-2019.
 - Features: Home team, win percentage, rebounds, turnovers, plus-minus, offensive rating, defensive rating, true shooting percentage.
 - Accuracy of 65%.
 
