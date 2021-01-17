@@ -65,8 +65,7 @@ def yesterday_summary(game_id_list):
         for summary in summary_list:
             header = 'Summaries for ' + d1 + ': ('+ str(summary_index) + '/' + str(num_summaries) + ')\n\n'
             content = header + summary
-            #api.update_status(content)
-            print(content)
+            api.update_status(content)
             summary_index += 1
 
     else:
