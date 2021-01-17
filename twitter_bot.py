@@ -39,3 +39,7 @@ today_prediction()
 # while True:
 #     schedule.run_pending()
 #     time.sleep(600)
+<<<<<<< HEAD
+=======
+
+>>>>>>> dc6ebae788d29f849bdad54e0a21c3d0d0cc1c21
