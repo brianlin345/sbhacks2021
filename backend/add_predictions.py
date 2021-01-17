@@ -15,3 +15,6 @@ def insert_prediction(game_id, prediction_string):
     c.execute('INSERT INTO game_predictions VALUES (?, ?)', summary_query)
     conn.commit()
     conn.close()
+
+def get_index():
+    

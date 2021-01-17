@@ -3,8 +3,6 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 
-nba_root = "https://www.espn.com/nba/boxscore"
-#game_id = 401267342
 
 def scrape_game(game_id):
     nba_root = "https://www.espn.com/nba/boxscore"
