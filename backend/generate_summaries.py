@@ -1,7 +1,9 @@
 import sqlite3
 import pandas as pd
+import requests
+from bs4 import BeautifulSoup
 
-from ESPN_scraper import scrape_game
+#from ESPN_scraper import scrape_game
 
 DATABASE = 'nbatweets.db'
 
@@ -55,19 +57,21 @@ def individual_highlight(box_score_df):
     for player_attribute in highlight_player:
         if key_index == 0:
             individual_highlight_string += highlight_player[player_attribute]
+            if double_digit_type > 0:
+                if double_digit_type == 1:
+                    individual_highlight_string += ", who recorded a double-double"
+                elif double_digit_type == 2:
+                    individual_highlight_string += ", who recorded a triple-double"
             individual_highlight_string += " with "
         else:
+            if key_index == num_attributes - 1:
+                individual_highlight_string += "and "
             individual_highlight_string += highlight_player[player_attribute] + " " + player_attribute
             if key_index < num_attributes - 1:
                 individual_highlight_string += ", "
         key_index += 1
-    if double_digit_type > 0:
-        if double_digit_type == 1:
-            individual_highlight_string += "–this was a double-double"
-        elif double_digit_type == 2:
-            individual_highlight_string += "–this was a triple-double"
 
-    individual_highlight_string += "."
+    individual_highlight_string += ". "
 
     return individual_highlight_string
 
@@ -151,7 +155,8 @@ def team_highlight(team_stat_df):
         team_highlight_string = team_stat_df.iloc[0]['Team'] + " had the most notable " + statsDict[homeTeamValues.index(max_home_diff)] + " performance with value " + str(max_home_diff)
     else:
         team_highlight_string = team_stat_df.iloc[1]['Team'] + " had the most notable " + statsDict[awayTeamValues.index(max_away_diff)] + " performance with value " + str(max_away_diff)
-
+    team_highlight_string += "."
+    
     return team_highlight_string
 
 def generate_summary(game_id):
@@ -167,9 +172,9 @@ def generate_summary(game_id):
     individual_highlight_string = individual_highlight(box_score_df)
     team_highlight_string = team_highlight(team_stat_df)
     summary = game_score_string + individual_highlight_string + team_highlight_string
-    return summary
+    return str(game_id), summary
 
-def insert_summary(game_index, summary_string):
+def insert_summary(game_id, summary_string):
     """
     This function inserts a summary into the database.
     Args:
@@ -177,7 +182,7 @@ def insert_summary(game_index, summary_string):
         game_index (int): index for the given game summary in database
         summary_string (string): summary of a game including final score, individual performance, and team performance.
     """
-    summary_query = (game_index, summary_string)
+    summary_query = (game_id, summary_string)
     conn = sqlite3.connect(DATABASE)
     c = conn.cursor()
     c.execute('INSERT INTO game_summaries VALUES (?, ?)', summary_query)
@@ -185,5 +190,86 @@ def insert_summary(game_index, summary_string):
     conn.close()
 
 
-summ = generate_summary(401267342)
-insert_summary(0, summ)
+def scrape_game(game_id):
+    nba_root = "https://www.espn.com/nba/boxscore"
+    box_score_params = {"gameId": game_id}
+
+    page = requests.get(nba_root, params = box_score_params)
+    soup = BeautifulSoup(page.content, 'html.parser')
+
+    tables = soup.find_all("table", "mod-data", limit = 2)
+    team_divs = soup.find_all("div", "team-name", limit = 2)
+    teams = []
+    for team in team_divs:
+        teams.append(team.text)
+
+    box_score_dict = {}
+    box_score_cols = []
+    team_stat_dict = {}
+    row_index = 0
+    team_row_index = 0
+    dnp = False
+
+    team_stat_exclude  = ["name", "min", "plusminus"]
+
+    team_num = 0
+    team_col = []
+
+    team_stat_found = False
+
+    for table in tables:
+        if row_index == 0:
+            header = table.find("thead")
+            categories = header.find_all("th")
+            for category in categories:
+                box_score_cols.append(category.text)
+
+        body = table.find_all("tbody", limit = 2)
+        for body_table in body:
+            rows = body_table.find_all("tr")
+            for row in rows:
+                curr_row = []
+                data = row.find_all("td")
+                if row.has_attr("class") and row["class"][0] == "highlight":
+                    if team_stat_found:
+                        continue
+
+                    for val in data:
+                        if val.has_attr("class") and val["class"][0] in team_stat_exclude:
+                            curr_row.append('')
+                        else:
+                            curr_row.append(val.text)
+                    team_stat_dict[team_row_index] = curr_row
+                    team_row_index += 1
+                    team_stat_found = True
+                    continue
+
+                for val in data:
+                    if val.has_attr("class") and val["class"][0] == "dnp":
+                        dnp = True
+                        continue
+                    if dnp:
+                        break
+                    if val.has_attr("class") and val["class"][0] == "name":
+                        link_text = val.find("span").text
+                        curr_row.append(link_text)
+                    else:
+                        curr_row.append(val.text)
+                if not dnp:
+                    box_score_dict[row_index] = curr_row
+                    row_index += 1
+                    team_col.append(teams[team_num])
+                dnp = False
+        team_num += 1
+        team_stat_found = False
+
+    box_score_df = pd.DataFrame.from_dict(box_score_dict, orient = 'index', columns = box_score_cols)
+    team_stat_df = pd.DataFrame.from_dict(team_stat_dict, orient = 'index', columns = box_score_cols)
+    box_score_df["Team"] = team_col
+    team_stat_df["Team"] = teams
+
+    return box_score_df, team_stat_df
+
+def create_summary(game_id):
+    id, summ = generate_summary(game_id)
+    insert_summary(id, summ)
