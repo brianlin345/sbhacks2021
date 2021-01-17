@@ -154,5 +154,6 @@ def insert_summary(game_index, summary_string):
     conn.close()
 
 
-summ = generate_summary(401267342)
-insert_summary(0, summ)
+summ = generate_summary(401267336)
+print(summ)
+insert_summary(1, summ)
