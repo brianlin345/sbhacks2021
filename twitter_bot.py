@@ -37,7 +37,7 @@ def today_prediction(prediction_id_list):
             for j in range(i * 4, (i+1) * 4):
                 if(j < len(prediction_list)):
                     header += prediction_list[j]
-            #api.update_status(header)
+            api.update_status(header)
             print(header)
     else:
         manualTweetFlag = False
